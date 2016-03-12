@@ -1,6 +1,18 @@
 /* Empty. Add your own CSS if you like */
 
-.grid-style{
+#game-grid{
+  position: absolute;
+  transform: translateY(0);
+  height: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #444;
+}
+
+.grid-square{
+  position: absolute;
   width: 33.333%;
   height: 20%;
+  background-origin: center;
 }
+

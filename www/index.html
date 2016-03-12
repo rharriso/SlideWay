@@ -25,10 +25,19 @@
   </head>
   <body ng-app="starter">
 
+    <!--
     <ion-pane>
       <ion-content>
-        <game-grid></game-grid>
       </ion-content>
     </ion-pane>
+    -->
+    <div id="game-grid" game-grid>
+      <div ng-repeat="p in positions"
+           class="grid-square"
+           grid-square
+           x="{{p.x}}"
+           y="{{p.y}}">
+      </div>
+    </div>
   </body>
 </html>
