@@ -86,8 +86,24 @@
     var gridSquares = [[]]
 
     /*
-     * listen for swipe
+     * listen for swipe in children
      */
+    $scope.$on('swipeup', function(e, sqrCtrl){
+      var p = sqrCtrl.getPosition();
+      console.log("move column", p.x, "up"); 
+    });
+    $scope.$on('swipedown', function(e, sqrCtrl){
+      var p = sqrCtrl.getPosition();
+      console.log("move column", p.x, "down"); 
+    });
+    $scope.$on('swipeleft', function(e, sqrCtrl){
+      var p = sqrCtrl.getPosition();
+      console.log("move row ", p.y, "left"); 
+    });
+    $scope.$on('swiperight', function(e, sqrCtrl){
+      var p = sqrCtrl.getPosition();
+      console.log("move row ", p.y, "right"); 
+    });
   }
   app.controller("GameGridController", GameGridController);
 
@@ -129,7 +145,8 @@
   /*
    * Grid Square controller
    */
-  function GridSquareController($scope, $element){
+  function GridSquareController($scope, $element, $ionicGesture){
+    var _this = this;
 
     $scope.$parent.$watch('image', function(image){
       if(!!image){
@@ -142,10 +159,18 @@
     /*
      * respond to swipes
      */
-    $scope.onSwipe = function($event){
-      window.lastevent = $event;
-      console.log($event);
-    };
+    $ionicGesture.on("swipeup", function(){
+      $scope.$emit("swipeup", _this);
+    }, $element);
+    $ionicGesture.on("swipedown", function(){
+      $scope.$emit("swipedown", _this);
+    }, $element);
+    $ionicGesture.on("swipeleft", function(){
+      $scope.$emit("swipeleft", _this);
+    }, $element);
+    $ionicGesture.on("swiperight", function(){
+      $scope.$emit("swiperight", _this);
+    }, $element);
 
     // 'physical positions'
     var posX, posY;
