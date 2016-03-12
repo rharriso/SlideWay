@@ -1,4 +1,3 @@
-// Ionic Starter App
 (function(){
   "use strict";
 
@@ -50,6 +49,9 @@
       "starry-night.jpg"
     ];
 
+    /*
+     * create position combinations
+     */
     $scope.positions = [];
 
     for(var i = 0; i < WIDTH; i++){
@@ -58,14 +60,41 @@
       }
     }
 
-    function shuffle(){
+    /*
+     * select image for square
+     */
+    function selectImage(){
       $scope.image = _.sample(IMAGES);
     }
-    shuffle();
+    selectImage();
+
+    /*
+     * register the square with the grid controller
+     */
+    this.registerSquare = function(sqrCtrl){
+      var p = sqrCtrl.getPosition();
+      gridSquares[p.x] = gridSquares[p.x] || [];
+      gridSquares[p.x][p.y] = gridSquares[p.x][p.y] || {};
+      var squareSet = gridSquares[p.x][p.y];
+
+      if(sqrCtrl.isSpare()){
+        squareSet.spare = sqrCtrl; 
+      } else {
+        squareSet.live = sqrCtrl; 
+      }
+    };
+    var gridSquares = [[]]
+
+    /*
+     * listen for swipe
+     */
   }
   app.controller("GameGridController", GameGridController);
 
 
+  /*
+   * Game grid directive
+   */
   app.directive("gameGrid", function(){
     return {
       restrict: "A",
@@ -76,10 +105,31 @@
 
 
   /*
-   * Game item
+   * grid square directive
+   */
+  app.directive("gridSquare", function(){
+    return {
+      restrict: "A",
+      require: ["^^gameGrid", "gridSquare"],
+      controller: "GridSquareController",
+      controllerAs: "sqrCtrl",
+      template: "<div class='grid-style'></div>",
+      scope: {
+        "x": "@",
+        "y": "@"
+      },
+      link: function($scope, $element, attrs, requirements){
+        var gameGrid = requirements[0];
+        var gridSquare = requirements[1];
+        gameGrid.registerSquare(gridSquare);
+      }
+    };
+  });
+
+  /*
+   * Grid Square controller
    */
   function GridSquareController($scope, $element){
-    var posX, posY;
 
     $scope.$parent.$watch('image', function(image){
       if(!!image){
@@ -89,6 +139,19 @@
       }
     });
 
+    // 'physical positions'
+    var posX, posY;
+
+    /*
+     * getPosition the physical position
+     */
+    this.getPosition = function(){
+      return {x: posX, y: posY};
+    }
+
+    /*
+     * set 'physical position'
+     */
     this.setPosition = function(x, y){
       posX = x;
       posY = y;
@@ -100,6 +163,24 @@
       });
     };
 
+    /*
+     * setSpare class on grid
+     */
+    this.setSpare = function(isSpare){
+      if(isSpare){
+        $element.addClass("isSpare");
+      } else {
+        $element.removeClass("isSpare");
+      }
+    }
+
+    /*
+     * Return true if is a spare
+     */
+    this.isSpare = function(){
+      return $element.hasClass("isSpare");
+    }
+    
     /*
      * return true if the square is in the
      * correct position
@@ -144,19 +225,5 @@
     initBackgroundImage();
   }
   app.controller("GridSquareController", GridSquareController);
-
-
-  app.directive("gridSquare", function(){
-    return {
-      restrict: "A",
-      controller: "GridSquareController",
-      controllerAs: "sqrCtrl",
-      template: "<div class='grid-style'></div>",
-      scope: {
-        "x": "@",
-        "y": "@"
-      }
-    };
-  });
 
 })();
