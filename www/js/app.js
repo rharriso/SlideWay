@@ -149,8 +149,8 @@
       }
       else{
         var wrapSquare = gridSquares[idx][HEIGHT-1];
-        for(var j = HEIGHT-2; j > 0; j--){
-          gridSquares[idx][j-1] = gridSquares[idx][j];
+        for(var j = HEIGHT-2; j >= 0; j--){
+          gridSquares[idx][j+1] = gridSquares[idx][j];
         }
         gridSquares[idx][0] = wrapSquare;
       }
@@ -180,7 +180,6 @@
      */
     $scope.$on('swipeup', function(e, sqrCtrl){
       if($scope.sliding) return;
-
       var p = sqrCtrl.getPosition();
       console.log("move column", p.x, "up"); 
 
@@ -190,13 +189,20 @@
       // allow DOM changes to apply before sliding
       $timeout(function(){
         slideColumn(p.x, "up");
-         
       });
-
     });
     $scope.$on('swipedown', function(e, sqrCtrl){
+      if($scope.sliding) return;
       var p = sqrCtrl.getPosition();
       console.log("move column", p.x, "down"); 
+
+      prepSpare({x: p.x, y: HEIGHT-1}, {x: p.x, y: -1});
+      setSliding(true);
+
+      // allow DOM changes to apply before sliding
+      $timeout(function(){
+        slideColumn(p.x, "down");
+      });
     });
     $scope.$on('swipeleft', function(e, sqrCtrl){
       var p = sqrCtrl.getPosition();
