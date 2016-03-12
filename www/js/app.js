@@ -112,6 +112,69 @@
     }
 
     /*
+     * setSliding
+     */
+    function setSliding(isSliding){
+      $scope.sliding = isSliding;
+      if(isSliding) {
+        $element.addClass("sliding");
+      }
+      else {
+        $element.removeClass("sliding");
+      }
+    }
+
+    /*
+     * slide row
+     */
+    function slideRow(idx, dir){
+      var isLeft = dir === 'left';
+      var adjust = (isLeft) ? -1 : 1;
+      
+      /*
+       * slide the spare
+       */
+      if(isLeft){
+        gridSquares[0][idx].spare.setPosition(WIDTH-1, idx); 
+      }
+      else{
+        gridSquares[WIDTH-1][idx].spare.setPosition(0, idx); 
+      }
+
+      /*
+       * slide other cells
+       */
+      for(var i = 0; i < WIDTH; i++){
+        gridSquares[i][idx].live.setPosition(i + adjust, idx);
+      }
+
+      /*
+       * adjust column
+       */
+      var spareSqr = null;
+      if(isLeft){
+        var wrapSquare = gridSquares[0][idx];
+        for(var i = 1; i < WIDTH; i++){
+          gridSquares[i-1][idx] = gridSquares[i][idx];
+        }
+        gridSquares[WIDTH-1][idx] = wrapSquare;
+      }
+      else{
+        var wrapSquare = gridSquares[WIDTH-1][idx];
+        for(var i = WIDTH-2; i >= 0; i--){
+          gridSquares[i+1][idx] = gridSquares[i][idx];
+        }
+        gridSquares[0][idx] = wrapSquare;
+      }
+      
+      // switch spares  for slider 
+      $timeout(function(){
+        var col = (isLeft) ? WIDTH - 1 : 0;
+        switchSpare({x: col, y: idx});
+      }, 250);
+    }
+
+    /*
      * slide column
      */
     function slideColumn(idx, dir){
@@ -205,8 +268,17 @@
       });
     });
     $scope.$on('swipeleft', function(e, sqrCtrl){
+      if($scope.sliding) return;
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "left"); 
+
+      prepSpare({x: 0, y: p.y}, {x: WIDTH + 1, y: p.y});
+      setSliding(true);
+
+      // allow DOM changes to apply before sliding
+      $timeout(function(){
+        slideRow(p.y, "left");
+      });
     });
     $scope.$on('swiperight', function(e, sqrCtrl){
       var p = sqrCtrl.getPosition();
