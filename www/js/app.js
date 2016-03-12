@@ -95,7 +95,9 @@
     function prepSpare(pos, prepPos){
       var sp = gridSquares[pos.x][pos.y].spare;
       sp.setPosition(prepPos.x, prepPos.y);
-      sp.setSpare(false);
+      $timeout(function(){
+        sp.setSpare(false);
+      })
     }
 
     /*
@@ -204,18 +206,12 @@
        */
       var spareSqr = null;
       if(isUp){
-        var wrapSquare = gridSquares[idx][0];
-        for(var j = 1; j < HEIGHT; j++){
-          gridSquares[idx][j-1] = gridSquares[idx][j];
-        }
-        gridSquares[idx][HEIGHT-1] = wrapSquare;
+        var wrapSquare = gridSquares[idx].shift();
+        gridSquares[idx].push(wrapSquare);
       }
       else{
-        var wrapSquare = gridSquares[idx][HEIGHT-1];
-        for(var j = HEIGHT-2; j >= 0; j--){
-          gridSquares[idx][j+1] = gridSquares[idx][j];
-        }
-        gridSquares[idx][0] = wrapSquare;
+        var wrapSquare = gridSquares[idx].pop();
+        gridSquares[idx].unshift(wrapSquare);
       }
       
       // switch spares  for slider 
@@ -252,7 +248,7 @@
       // allow DOM changes to apply before sliding
       $timeout(function(){
         slideColumn(p.x, "up");
-      });
+      }, 50);
     });
     $scope.$on('swipedown', function(e, sqrCtrl){
       if($scope.sliding) return;
@@ -265,7 +261,7 @@
       // allow DOM changes to apply before sliding
       $timeout(function(){
         slideColumn(p.x, "down");
-      });
+      }, 50);
     });
     $scope.$on('swipeleft', function(e, sqrCtrl){
       if($scope.sliding) return;
@@ -278,7 +274,7 @@
       // allow DOM changes to apply before sliding
       $timeout(function(){
         slideRow(p.y, "left");
-      });
+      }, 50);
     });
     $scope.$on('swiperight', function(e, sqrCtrl){
       if($scope.sliding) return;
@@ -292,7 +288,7 @@
       // allow DOM changes to apply before sliding
       $timeout(function(){
         slideRow(p.y, "right");
-      });
+      }, 50);
     });
 
     $element.on("transitionend", function(){

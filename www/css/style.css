@@ -12,9 +12,6 @@
   width: 33.333%;
   height: 20%;
   background-origin: center;
-}
-
-.sliding .grid-square {
   transition-duration: 0.25s;
 }
 
