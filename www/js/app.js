@@ -51,7 +51,7 @@
   /*
    * Game Grid
    */
-  function GameGridController($scope, $compile, $element, $timeout){
+  function GameGridController($scope, $compile, $element, $timeout, $ionicGesture){
     $scope.sliding = false;
 
     var IMAGES = [
@@ -302,6 +302,13 @@
     $element.on("transitionend", function(){
       setSliding(false);
     });
+
+    /*
+     * show menu on tap
+     */
+    $ionicGesture.on("tap", function(){
+      console.error("implement show the menu"); 
+    }, $element);
   }
   app.controller("GameGridController", GameGridController);
 
