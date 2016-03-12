@@ -41,7 +41,8 @@
   /*
    * Game Grid
    */
-  function GameGridController($scope, $compile, $element){
+  function GameGridController($scope, $compile, $element, $timeout){
+    $scope.sliding = false;
 
     var IMAGES = [
       "olympus.jpg",
@@ -61,14 +62,6 @@
     }
 
     /*
-     * select image for square
-     */
-    function selectImage(){
-      $scope.image = _.sample(IMAGES);
-    }
-    selectImage();
-
-    /*
      * register the square with the grid controller
      */
     this.registerSquare = function(sqrCtrl){
@@ -83,14 +76,123 @@
         squareSet.live = sqrCtrl; 
       }
     };
-    var gridSquares = [[]]
+    var gridSquares = [[]];
+
+
+    /*
+     * select image for square
+     */
+    function selectImage(){
+      $scope.image = _.sample(IMAGES);
+    }
+    selectImage();
+    
+    /*
+     * move spare grid into position for transition
+     *    - pos: position of spare
+     *    - prepPos: pre position of spare
+     */
+    function prepSpare(pos, prepPos){
+      var sp = gridSquares[pos.x][pos.y].spare;
+      sp.setPosition(prepPos.x, prepPos.y);
+      sp.setSpare(false);
+    }
+
+    /*
+     * switchSpare and live (after slide)
+     */
+    function switchSpare(pos){
+      var sqr = gridSquares[pos.x][pos.y];
+      var holder = sqr.spare;
+
+      sqr.spare = sqr.live;
+      sqr.spare.setSpare(true);
+      sqr.live = holder;
+      sqr.live.setSpare(false);
+    }
+
+    /*
+     * slide column
+     */
+    function slideColumn(idx, dir){
+      var isUp = dir === 'up';
+      var adjust = (isUp) ? -1 : 1;
+
+      console.log($element);
+      /*
+       * slide the spare
+       */
+      if(isUp){
+        gridSquares[idx][0].spare.setPosition(idx, HEIGHT-1); 
+      }
+      else{
+        gridSquares[idx][HEIGHT-1].spare.setPosition(idx, 0); 
+      }
+
+      /*
+       * slide other cells
+       */
+      for(var j = 0; j < HEIGHT; j++){
+        gridSquares[idx][j].live.setPosition(idx, j + adjust);
+      }
+
+      /*
+       * adjust column
+       */
+      var spareSqr = null;
+      if(isUp){
+        var wrapSquare = gridSquares[idx][0];
+        for(var j = 1; j < HEIGHT; j++){
+          gridSquares[idx][j-1] = gridSquares[idx][j];
+        }
+        gridSquares[idx][HEIGHT-1] = wrapSquare;
+      }
+      else{
+        var wrapSquare = gridSquares[idx][HEIGHT-1];
+        for(var j = HEIGHT-2; j > 0; j--){
+          gridSquares[idx][j-1] = gridSquares[idx][j];
+        }
+        gridSquares[idx][0] = wrapSquare;
+      }
+      
+      // switch spares  for slider 
+      $timeout(function(){
+        var row = (isUp) ? HEIGHT - 1 : 0;
+        switchSpare({x: idx, y: row});
+      }, 250);
+    }
+
+    /*
+     * setSliding
+     */
+    function setSliding(isSliding){
+      $scope.sliding = isSliding;
+      if(isSliding) {
+        $element.addClass("sliding");
+      }
+      else {
+        $element.removeClass("sliding");
+      }
+    }
 
     /*
      * listen for swipe in children
      */
     $scope.$on('swipeup', function(e, sqrCtrl){
+      if($scope.sliding) return;
+
       var p = sqrCtrl.getPosition();
       console.log("move column", p.x, "up"); 
+
+      prepSpare({x: p.x, y: 0}, {x: p.x, y: HEIGHT});
+      setSliding(true);
+
+      // allow DOM changes to apply before sliding
+      $timeout(function(){
+        slideColumn(p.x, "up");
+         
+      });
+
     });
     $scope.$on('swipedown', function(e, sqrCtrl){
       var p = sqrCtrl.getPosition();
@@ -103,6 +205,10 @@
     $scope.$on('swiperight', function(e, sqrCtrl){
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "right"); 
+    });
+
+    $element.on("transitionend", function(){
+      setSliding(false);
     });
   }
   app.controller("GameGridController", GameGridController);
@@ -156,6 +262,8 @@
       }
     });
 
+    this.el = $element;
+
     /*
      * respond to swipes
      */
@@ -180,7 +288,7 @@
      */
     this.getPosition = function(){
       return {x: posX, y: posY};
-    }
+    };
 
     /*
      * set 'physical position'
@@ -189,7 +297,7 @@
       posX = x;
       posY = y;
       var tX = posX * 100;
-      var tY = $scope.y * 100;
+      var tY = posY * 100;
 
       $element.css({
         "transform": "translate3d("+tX+"%, "+tY+"%, 0)",
@@ -201,27 +309,26 @@
      */
     this.setSpare = function(isSpare){
       if(isSpare){
-        $element.addClass("isSpare");
+        $element.addClass("spare");
       } else {
-        $element.removeClass("isSpare");
+        $element.removeClass("spare");
       }
-    }
+    };
 
     /*
      * Return true if is a spare
      */
     this.isSpare = function(){
-      return $element.hasClass("isSpare");
-    }
+      return $element.hasClass("spare");
+    };
     
     /*
      * return true if the square is in the
      * correct position
      */
     this.isCorrect = function(){
-      return posX === $scope.x
-        && posY === $scope.y;
-    }
+      return posX === $scope.x && posY === $scope.y;
+    };
    
     /*
      * Initialize the background image and position
