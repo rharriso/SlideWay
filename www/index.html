@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
 
@@ -34,9 +35,11 @@
     <div id="game-grid" game-grid>
       <div ng-repeat="p in positions"
            grid-square class="grid-square"
+           on-swipe="onSwipe($event)"
            x="{{p.x}}" y="{{p.y}}">
       <div ng-repeat="p in positions"
            grid-square class="grid-square spare"
+           on-swipe="onSwipe($event)"
            x="{{p.x}}" y="{{p.y}}">
       </div>
     </div>

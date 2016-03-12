@@ -134,10 +134,18 @@
     $scope.$parent.$watch('image', function(image){
       if(!!image){
         $element.css({
-          "background-image": "url('../img/puzzle/"+image+"')"
+          "background-image": "url('img/puzzle/"+image+"')"
         });
       }
     });
+
+    /*
+     * respond to swipes
+     */
+    $scope.onSwipe = function($event){
+      window.lastevent = $event;
+      console.log($event);
+    };
 
     // 'physical positions'
     var posX, posY;
