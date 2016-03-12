@@ -26,13 +26,14 @@
     });
 })();
 
+
 /*
  * SlideWay App
  */
 (function(){
   "use strict";
   var app = angular.module('slideway', []);  
-    
+
   var HEIGHT = 5;
   var WIDTH = 3;
   var blockHeight = window.innerHeight / HEIGHT;
@@ -78,9 +79,7 @@
    * Game item
    */
   function GridSquareController($scope, $element){
-    $scope.x = parseInt($scope.x);
-    $scope.y = parseInt($scope.y);
-    initStyle();
+    var posX, posY;
 
     $scope.$parent.$watch('image', function(image){
       if(!!image){
@@ -90,9 +89,30 @@
       }
     });
 
-    function initStyle(){
-      var x = $scope.x * 100;
-      var y = $scope.y * 100;
+    this.setPosition = function(x, y){
+      posX = x;
+      posY = y;
+      var tX = posX * 100;
+      var tY = $scope.y * 100;
+
+      $element.css({
+        "transform": "translate3d("+tX+"%, "+tY+"%, 0)",
+      });
+    };
+
+    /*
+     * return true if the square is in the
+     * correct position
+     */
+    this.isCorrect = function(){
+      return posX === $scope.x
+        && posY === $scope.y;
+    }
+   
+    /*
+     * Initialize the background image and position
+     */ 
+    function initBackgroundImage(){
       var backX = $scope.x * blockWidth - 100;
       var backXStr = "50%";
       var backY = $scope.y * blockHeight - 300;
@@ -110,11 +130,18 @@
       }
 
       $element.css({
-        "transform": "translate3d("+x+"%, "+y+"%, 0)",
         "background-position-x": backXStr,
         "background-position-y": backYStr
       });
     }
+
+    /*
+     * Initialize
+     */
+    $scope.x = parseInt($scope.x);
+    $scope.y = parseInt($scope.y);
+    this.setPosition($scope.x, $scope.y);
+    initBackgroundImage();
   }
   app.controller("GridSquareController", GridSquareController);
 
@@ -124,9 +151,7 @@
       restrict: "A",
       controller: "GridSquareController",
       controllerAs: "sqrCtrl",
-      template: "<div class='grid-style' " +
-        ">" +
-        "</div>",
+      template: "<div class='grid-style'></div>",
       scope: {
         "x": "@",
         "y": "@"
