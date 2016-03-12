@@ -281,8 +281,18 @@
       });
     });
     $scope.$on('swiperight', function(e, sqrCtrl){
+      if($scope.sliding) return;
+      
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "right"); 
+
+      prepSpare({x: WIDTH - 1, y: p.y}, {x: -1, y: p.y});
+      setSliding(true);
+
+      // allow DOM changes to apply before sliding
+      $timeout(function(){
+        slideRow(p.y, "right");
+      });
     });
 
     $element.on("transitionend", function(){
