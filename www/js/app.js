@@ -1,6 +1,16 @@
 (function(){
   "use strict";
 
+  function killEvent(e){
+    e.preventDefault();
+    debugger
+
+  }
+  document.addEventListener("touchstart", killEvent, false);
+  document.addEventListener("touchmove", killEvent, false);
+  document.addEventListener("touchend", killEvent, false);
+  document.addEventListener("touchcancel", killEvent, false);
+
   // angular.module is a global place for creating, registering and retrieving Angular modules
   // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
   // the 2nd parameter is an array of 'requires'
@@ -183,7 +193,6 @@
       var isUp = dir === 'up';
       var adjust = (isUp) ? -1 : 1;
 
-      console.log($element);
       /*
        * slide the spare
        */
@@ -238,9 +247,8 @@
      * listen for swipe in children
      */
     $scope.$on('swipeup', function(e, sqrCtrl){
-      if($scope.sliding) return;
+      if($scope.sliding) return false;
       var p = sqrCtrl.getPosition();
-      console.log("move column", p.x, "up"); 
 
       prepSpare({x: p.x, y: 0}, {x: p.x, y: HEIGHT});
       setSliding(true);
@@ -251,7 +259,7 @@
       }, 50);
     });
     $scope.$on('swipedown', function(e, sqrCtrl){
-      if($scope.sliding) return;
+      if($scope.sliding) return false;
       var p = sqrCtrl.getPosition();
       console.log("move column", p.x, "down"); 
 
@@ -264,7 +272,7 @@
       }, 50);
     });
     $scope.$on('swipeleft', function(e, sqrCtrl){
-      if($scope.sliding) return;
+      if($scope.sliding) return false;
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "left"); 
 
@@ -277,7 +285,7 @@
       }, 50);
     });
     $scope.$on('swiperight', function(e, sqrCtrl){
-      if($scope.sliding) return;
+      if($scope.sliding) return false;
       
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "right"); 
@@ -413,14 +421,16 @@
     this.isCorrect = function(){
       return posX === $scope.x && posY === $scope.y;
     };
-   
+  
+    var H_CENTER = 100; 
+    var V_CENTER = 300; 
     /*
      * Initialize the background image and position
      */ 
     function initBackgroundImage(){
-      var backX = $scope.x * blockWidth - 100;
+      var backX = $scope.x * blockWidth - H_CENTER;
       var backXStr = "50%";
-      var backY = $scope.y * blockHeight - 300;
+      var backY = $scope.y * blockHeight - V_CENTER;
       var backYStr = "50%";
 
       if(backX < 0) {
