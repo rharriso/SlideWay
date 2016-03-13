@@ -1,3 +1,12 @@
+.bar-header{
+  transition-duration: 0.5s;
+  transform: translateY(0%);
+}
+.bar-header.hidden {
+  transform: translateY(-100%);
+}
+
+
 #game-grid{
   position: absolute;
   transform: translateY(0);

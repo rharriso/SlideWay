@@ -3,8 +3,6 @@
 
   function killEvent(e){
     e.preventDefault();
-    debugger
-
   }
   document.addEventListener("touchstart", killEvent, false);
   document.addEventListener("touchmove", killEvent, false);
@@ -47,19 +45,82 @@
   var WIDTH = 3;
   var blockHeight = window.innerHeight / HEIGHT;
   var blockWidth = window.innerWidth / WIDTH;
+  var HIDE_MENU_TIMEOUT = 2000;
+  var header = angular.element(document.getElementById("header"));
 
   /*
-   * Game Grid
+   * master directive
    */
-  function GameGridController($scope, $compile, $element, $timeout, $ionicGesture){
-    $scope.sliding = false;
+  app.directive("master", function(){
+    return {
+      restrict: "E",
+      require: "gameGrid",
+      controller: "MasterController",
+      controllerAs: "master",
+    };
+  });
 
+  /*
+   * MasterController
+   */
+  function MasterController($scope, $element, $ionicGesture){
+    var header = angular.element(document.getElementById("header"));
+
+    /*
+     * Hide the menu oafter a timeout
+     */
+    var hideMenu = _.debounce(function(){
+      header.addClass("hidden");
+    }, HIDE_MENU_TIMEOUT);
+    hideMenu();
+
+    /*
+     * show menu on tap
+     */
+    $ionicGesture.on("tap", function(){
+      header.removeClass("hidden");
+      hideMenu(); // hide on delay
+    }, $element);
+
+
+    /*
+     * Image handling
+     */
     var IMAGES = [
       "olympus.jpg",
       "pillars.jpg",
       "starry-night.jpg"
     ];
 
+    /*
+     * select image for square
+     */
+    function selectImage(){
+      $scope.image = _.sample(IMAGES);
+    }
+    selectImage();
+  }
+  app.controller("MasterController", MasterController);
+
+  
+  /*
+   * Game grid directive
+   */
+  app.directive("gameGrid", function(){
+    return {
+      restrict: "A",
+      require: "master",
+      controller: "GameGridController",
+      controllerAs: "gridCtrl",
+    };
+  });
+
+  /*
+   * Game Grid
+   */
+  function GameGridController($scope, $element, $timeout, $ionicGesture){
+    $scope.sliding = false;
+    
     /*
      * create position combinations
      */
@@ -88,14 +149,21 @@
     };
     var gridSquares = [[]];
 
-
     /*
-     * select image for square
+     * shuffle the grid squares
      */
-    function selectImage(){
-      $scope.image = _.sample(IMAGES);
-    }
-    selectImage();
+    this.shuffle = function(){
+      gridSquares = _.shuffle(gridSquares);
+      for(var i = 0; i < WIDTH; i++){
+        gridSquares[i] = _.shuffle(gridSquares[i]);
+      }
+
+      for(var i = 0; i < WIDTH; i++){
+        for(var j = 0; j < HEIGHT; j++){
+          gridSquares[i][j].live.setPosition(i, j);
+        }
+      }
+    };
     
     /*
      * move spare grid into position for transition
@@ -121,19 +189,6 @@
       sqr.spare.setSpare(true);
       sqr.live = holder;
       sqr.live.setSpare(false);
-    }
-
-    /*
-     * setSliding
-     */
-    function setSliding(isSliding){
-      $scope.sliding = isSliding;
-      if(isSliding) {
-        $element.addClass("sliding");
-      }
-      else {
-        $element.removeClass("sliding");
-      }
     }
 
     /*
@@ -231,19 +286,6 @@
     }
 
     /*
-     * setSliding
-     */
-    function setSliding(isSliding){
-      $scope.sliding = isSliding;
-      if(isSliding) {
-        $element.addClass("sliding");
-      }
-      else {
-        $element.removeClass("sliding");
-      }
-    }
-
-    /*
      * listen for swipe in children
      */
     $scope.$on('swipeup', function(e, sqrCtrl){
@@ -251,7 +293,7 @@
       var p = sqrCtrl.getPosition();
 
       prepSpare({x: p.x, y: 0}, {x: p.x, y: HEIGHT});
-      setSliding(true);
+      $scope.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -264,7 +306,7 @@
       console.log("move column", p.x, "down"); 
 
       prepSpare({x: p.x, y: HEIGHT-1}, {x: p.x, y: -1});
-      setSliding(true);
+      $scope.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -277,7 +319,7 @@
       console.log("move row ", p.y, "left"); 
 
       prepSpare({x: 0, y: p.y}, {x: WIDTH + 1, y: p.y});
-      setSliding(true);
+      $scope.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -291,7 +333,7 @@
       console.log("move row ", p.y, "right"); 
 
       prepSpare({x: WIDTH - 1, y: p.y}, {x: -1, y: p.y});
-      setSliding(true);
+      $scope.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -300,29 +342,37 @@
     });
 
     $element.on("transitionend", function(){
-      setSliding(false);
+      if(!$scope.sliding) return;
+      $scope.sliding = false;
+      checkVictory();
     });
 
     /*
-     * show menu on tap
+     * broadcast victory if the blocks are all in
+     * correct location
      */
-    $ionicGesture.on("tap", function(){
-      console.error("implement show the menu"); 
-    }, $element);
+    function checkVictory(){
+      if(isSolved()){
+        alert("fuck yeah");
+      } 
+    }
+
+    /*
+     * returns true if all the blocks are in the right place
+     */
+    function isSolved(){
+      for(var i = 0; i < WIDTH; i++){
+        for(var j = 0; j < HEIGHT; j++){
+          if(!gridSquares[i][j].live.isCorrect()){
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
   }
   app.controller("GameGridController", GameGridController);
-
-
-  /*
-   * Game grid directive
-   */
-  app.directive("gameGrid", function(){
-    return {
-      restrict: "A",
-      controller: "GameGridController",
-      controllerAs: "gridCtrl",
-    };
-  });
 
 
   /*
@@ -420,14 +470,15 @@
     this.isSpare = function(){
       return $element.hasClass("spare");
     };
-    
+
     /*
-     * return true if the square is in the
-     * correct position
+     *  return true if in the correct position
      */
     this.isCorrect = function(){
-      return posX === $scope.x && posY === $scope.y;
+      return parseInt($scope.x) === posX &&
+        parseInt($scope.y) === posY;
     };
+
   
     var H_CENTER = 100; 
     var V_CENTER = 300; 
