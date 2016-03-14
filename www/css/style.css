@@ -10,6 +10,13 @@
   border: 1px solid #ddd;
 }
 
+#preview-image{
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-position: center center;
+}
+
 #game-grid{
   position: absolute;
   transform: translateY(0);

@@ -63,14 +63,20 @@
   /*
    * MasterController
    */
-  function MasterController($scope, $element, $ionicGesture){
+  function MasterController($scope, $element, $ionicGesture, $ionicModal){
     var header = angular.element(document.getElementById("header"));
+
+    $ionicModal.fromTemplateUrl('templates/modal.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.modal = modal;
+    });
 
     /*
      * Show correct arrangement
      */
     $scope.showSolution = function(){
-
+      $scope.modal.show();
     };
 
     /*
