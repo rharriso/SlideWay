@@ -6,5 +6,6 @@ platforms/
 plugins/
 .editorconfig
 .bowerrc
+bower_components
 
 www/lib
