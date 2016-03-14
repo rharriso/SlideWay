@@ -2,11 +2,9 @@
   "name": "HelloIonic",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.4",
-    "mdi": "^1.5.54"
+    "ionic": "driftyco/ionic-bower#1.2.4"
   },
   "dependencies": {
-    "lodash": "^4.6.1",
-    "mdi": "^1.5.54"
+    "lodash": "^4.6.1"
   }
 }

@@ -31,9 +31,12 @@
 
     <master>
       <div id="header" class="bar bar-header bar-dark">
-          <h1 class="title">SlideWays</h1>
-          <button class="button button-stable"
-            ng-click="gridCtrl.shuffle()">Shuffle</button>
+        <button class="icon ion-eye button button-dark"
+          ng-click="showSolution()"></button>
+        
+        <h1 class="title">SlideWays</h1>
+        <button class="button button-dark"
+          ng-click="gridCtrl.shuffle()">Shuffle</button>
       </div>
 
       <div id="game-grid" game-grid>

@@ -67,6 +67,13 @@
     var header = angular.element(document.getElementById("header"));
 
     /*
+     * Show correct arrangement
+     */
+    $scope.showSolution = function(){
+
+    };
+
+    /*
      * Hide the menu oafter a timeout
      */
     var hideMenu = _.debounce(function(){

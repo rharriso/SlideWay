@@ -6,6 +6,9 @@
   transform: translateY(-100%);
 }
 
+.button.button-dark{
+  border: 1px solid #ddd;
+}
 
 #game-grid{
   position: absolute;
