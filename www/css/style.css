@@ -1,3 +1,9 @@
+body{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
 .bar-header{
   transition-duration: 0.5s;
   transform: translateY(0%);
@@ -15,6 +21,7 @@
   width: 100%;
   position: absolute;
   background-position: center center;
+  background-size: auto 120%;
 }
 
 #game-grid{
@@ -32,6 +39,7 @@
   height: 20%;
   background-origin: center;
   transition-duration: 0.25s;
+  background-size: auto 600%;
 }
 
 .grid-square.spare{

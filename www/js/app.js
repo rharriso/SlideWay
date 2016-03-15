@@ -100,7 +100,18 @@
      * Image handling
      */
     var IMAGES = [
-      "bird-ledge.jpg", "snow-lake.jpg", "cat-face.jpg", "snow-park.jpg", "steak.jpg"
+      "bird-ledge.jpg",
+      "droplet-window.jpg",
+      "park-view.jpg",
+      "saturn.jpg",
+      "snow-park.jpg",
+      "starry-night.jpg",
+      "cat-face.jpg",
+      "olympus.jpg",
+      "pillars.jpg",
+      "snow-lake.jpg",
+      "snow-street.jpg",
+      "steak.jpg",
     ];
 
     /*
