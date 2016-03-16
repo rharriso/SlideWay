@@ -35,8 +35,8 @@
               ng-click="showSolution()"></button>
 
       <h1 class="title">SlideWays</h1>
-      <button class="button button-dark"
-              ng-click="gridCtrl.shuffle()">Shuffle</button>
+      <button class="icon ion-shuffle button button-dark"
+              ng-click="gridCtrl.shuffle()"></button>
     </div>
 
     <div id="game-grid" game-grid>
@@ -57,12 +57,12 @@
     </ion-footer-bar>
 
     <script id="templates/modal.html" type="text/ng-template">
-<ion-modal-view>
-      <ion-header-bar class="bar bar-header bar-dark">
-      <h1 class="title">solution</h1>
-      <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
-      </ion-header-bar>
-      <div id="preview-image" style="background-image: url('img/puzzle/{{image}}')"/>
+      <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-dark">
+        <h1 class="title">solution</h1>
+        <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
+        </ion-header-bar>
+        <div id="preview-image" style="background-image: url('img/puzzle/{{image}}')"/>
       </ion-modal-view>
     </script>
 

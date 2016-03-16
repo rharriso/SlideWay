@@ -116,7 +116,27 @@
 			header.removeClass("hidden");
 			hideMenu(); // hide on delay
 		}, $element);
+  }
+	app.controller("MasterController", MasterController);
 
+
+	/*
+	 * Game grid directive
+	 */
+	app.directive("gameGrid", function(){
+		return {
+			restrict: "A",
+			require: "master",
+			controller: "GameGridController",
+			controllerAs: "gridCtrl",
+		};
+	});
+
+	/*
+	 * Game Grid
+	 */
+	function GameGridController($scope, $element, $timeout, $ionicGesture){
+		$scope.sliding = false;
 
 		/*
 		 * Image handling
@@ -143,27 +163,6 @@
 			$scope.image = _.sample(IMAGES);
 		}
 		selectImage();
-	}
-	app.controller("MasterController", MasterController);
-
-
-	/*
-	 * Game grid directive
-	 */
-	app.directive("gameGrid", function(){
-		return {
-			restrict: "A",
-			require: "master",
-			controller: "GameGridController",
-			controllerAs: "gridCtrl",
-		};
-	});
-
-	/*
-	 * Game Grid
-	 */
-	function GameGridController($scope, $element, $timeout, $ionicGesture){
-		$scope.sliding = false;
 
 		/*
 		 * create position combinations
@@ -197,6 +196,7 @@
 		 * shuffle the grid squares
 		 */
 		this.shuffle = function(){
+      selectImage();
 			gridSquares = _.shuffle(gridSquares);
 			for(var i = 0; i < WIDTH; i++){
 				gridSquares[i] = _.shuffle(gridSquares[i]);
