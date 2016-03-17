@@ -169,10 +169,11 @@
      */
     function selectImage(){
       $scope.image = _.sample(IMAGES);
+      var url = 'img/puzzle/'+$scope.image;
+
       var styleTag = document.getElementById("app-style");
       styleTag.innerHTML = ".grid-square {" +
-                  "  background-image: url('img/puzzle/"+
-                  $scope.image+"')" +
+                  "  background-image: url("+url+")" +
           "}";
     }
     selectImage();
@@ -549,15 +550,16 @@
     }
 
 
-    var H_CENTER = 100; 
-    var V_CENTER = 300; 
+    var H_CENTER = Math.floor(WIDTH / 2)
+    var V_CENTER = Math.floor(HEIGHT/ 2)
+    
     /*
      * Initialize the background image and position
      */ 
     function initBackgroundImage(){
-      var backX = $scope.x * blockWidth - H_CENTER;
+      var backX = ($scope.x - H_CENTER) * blockWidth;
       var backXStr = "50%";
-      var backY = $scope.y * blockHeight - V_CENTER;
+      var backY = ($scope.y - V_CENTER) * blockHeight;
       var backYStr = "50%";
 
       if(backX < 0) {
@@ -572,8 +574,7 @@
       }
 
       $element.css({
-        "background-position-x": backXStr,
-        "background-position-y": backYStr
+        "background-position": backXStr+" "+backYStr
       });
     }
 

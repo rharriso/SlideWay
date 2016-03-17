@@ -46,7 +46,7 @@ body{
   height: 20%;
   background-origin: center;
   transition-duration: 0.25s;
-  background-size: auto 600%;
+  background-size: auto 500%;
 }
 
 .grid-square.spare{
