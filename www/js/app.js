@@ -65,8 +65,6 @@
 
   var HEIGHT = 5;
   var WIDTH = 3;
-  var blockHeight = window.innerHeight / HEIGHT;
-  var blockWidth = window.innerWidth / WIDTH;
   var HIDE_MENU_TIMEOUT = 2000;
   var header = angular.element(document.getElementById("header"));
 
@@ -468,7 +466,7 @@
   /*
    * Grid Square controller
    */
-  function GridSquareController($scope, $element, $ionicGesture){
+  function GridSquareController($scope, $element, $ionicGesture, $window){
     var _this = this;
     this.el = $element;
 
@@ -557,10 +555,18 @@
      * Initialize the background image and position
      */ 
     function initBackgroundImage(){
+      var blockHeight = window.innerHeight / HEIGHT;
+      var blockWidth = window.innerWidth / WIDTH;
+      console.log(blockHeight, blockWidth);
       var backX = ($scope.x - H_CENTER) * blockWidth;
       var backXStr = "50%";
       var backY = ($scope.y - V_CENTER) * blockHeight;
       var backYStr = "50%";
+      console.log($scope.y, $scope.x);
+
+      if($scope.x === '2' && $scope.y === '0'){
+        console.log(backY, backX);
+      }
 
       if(backX < 0) {
         backXStr = "calc(50% + "+Math.abs(backX)+"px)";
@@ -583,8 +589,9 @@
      */
     $scope.x = parseInt($scope.x);
     $scope.y = parseInt($scope.y);
-    this.setPosition($scope.x, $scope.y);
+    _this.setPosition($scope.x, $scope.y);
     initBackgroundImage();
+    angular.element($window).on('resize', initBackgroundImage);
   }
   app.controller("GridSquareController", GridSquareController);
 
