@@ -28,11 +28,14 @@
     <script src="js/app.js"></script>
   </head>
   <body ng-app="starter">
+    <style id="app-style"></style>
 
     <master>
     <div id="header" class="bar bar-header bar-dark">
       <button class="icon ion-eye button button-dark"
               ng-click="showSolution()"></button>
+      <button class="icon ion-image button button-dark"
+              ng-click="changeImage()"></button>
 
       <h1 class="title">SlideWays</h1>
       <button class="icon ion-shuffle button button-dark"
@@ -52,8 +55,7 @@
     </div>
     </master>
 
-    <ion-footer-bar class="bar-stable">
-      <h1 class="title">AdMob Example</h1>
+    <ion-footer-bar class="bar-stable ad-bar">
     </ion-footer-bar>
 
     <script id="templates/modal.html" type="text/ng-template">

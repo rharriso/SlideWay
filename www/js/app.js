@@ -136,7 +136,9 @@
    * Game Grid
    */
   function GameGridController($scope, $element, $timeout, $ionicGesture){
-    $scope.sliding = false;
+    var _this = this;
+    _this.sliding = false;
+    _this.shuffled = false;
 
     /*
      * Image handling
@@ -156,11 +158,22 @@
       "steak.jpg",
     ];
 
+    $scope.changeImage = function(){
+      selectImage();
+      fixPositions();
+      _this.shuffled = false;
+    }
+
     /*
      * select image for square
      */
     function selectImage(){
       $scope.image = _.sample(IMAGES);
+      var styleTag = document.getElementById("app-style");
+      styleTag.innerHTML = ".grid-square {" +
+                  "  background-image: url('img/puzzle/"+
+                  $scope.image+"')" +
+          "}";
     }
     selectImage();
 
@@ -196,7 +209,6 @@
      * shuffle the grid squares
      */
     this.shuffle = function(){
-      selectImage();
       gridSquares = _.shuffle(gridSquares);
       for(var i = 0; i < WIDTH; i++){
         gridSquares[i] = _.shuffle(gridSquares[i]);
@@ -207,6 +219,8 @@
           gridSquares[i][j].live.setPosition(i, j);
         }
       }
+      _this.shuffled = true;
+      _this.sliding = true;
     };
 
     /*
@@ -333,11 +347,11 @@
      * listen for swipe in children
      */
     $scope.$on('swipeup', function(e, sqrCtrl){
-      if($scope.sliding) return false;
+      if(_this.sliding || !_this.shuffled) return false;
       var p = sqrCtrl.getPosition();
 
       prepSpare({x: p.x, y: 0}, {x: p.x, y: HEIGHT});
-      $scope.sliding = true;
+      _this.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -345,12 +359,12 @@
       }, 50);
     });
     $scope.$on('swipedown', function(e, sqrCtrl){
-      if($scope.sliding) return false;
+      if(_this.sliding || !_this.shuffled) return false;
       var p = sqrCtrl.getPosition();
       console.log("move column", p.x, "down"); 
 
       prepSpare({x: p.x, y: HEIGHT-1}, {x: p.x, y: -1});
-      $scope.sliding = true;
+      _this.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -358,12 +372,12 @@
       }, 50);
     });
     $scope.$on('swipeleft', function(e, sqrCtrl){
-      if($scope.sliding) return false;
+      if(_this.sliding || !_this.shuffled) return false;
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "left"); 
 
       prepSpare({x: 0, y: p.y}, {x: WIDTH + 1, y: p.y});
-      $scope.sliding = true;
+      _this.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -371,13 +385,13 @@
       }, 50);
     });
     $scope.$on('swiperight', function(e, sqrCtrl){
-      if($scope.sliding) return false;
+      if(_this.sliding || !_this.shuffled) return false;
 
       var p = sqrCtrl.getPosition();
       console.log("move row ", p.y, "right"); 
 
       prepSpare({x: WIDTH - 1, y: p.y}, {x: -1, y: p.y});
-      $scope.sliding = true;
+      _this.sliding = true;
 
       // allow DOM changes to apply before sliding
       $timeout(function(){
@@ -386,8 +400,8 @@
     });
 
     $element.on("transitionend", function(){
-      if(!$scope.sliding) return;
-      $scope.sliding = false;
+      if(!_this.sliding) return;
+      _this.sliding = false;
       checkVictory();
     });
 
@@ -415,6 +429,15 @@
 
       return true;
     }
+
+    function fixPositions (){
+      for(var i = 0; i < WIDTH; i++){
+        for(var j = 0; j < HEIGHT; j++){
+          var p = gridSquares[i][j].live.getActualPosition();
+          gridSquares[i][j].live.setPosition(p.x, p.y);
+        }
+      }
+    };
   }
   app.controller("GameGridController", GameGridController);
 
@@ -446,15 +469,6 @@
    */
   function GridSquareController($scope, $element, $ionicGesture){
     var _this = this;
-
-    $scope.$parent.$watch('image', function(image){
-      if(!!image){
-        $element.css({
-          "background-image": "url('img/puzzle/"+image+"')"
-        });
-      }
-    });
-
     this.el = $element;
 
     /*
@@ -522,6 +536,17 @@
       return parseInt($scope.x) === posX &&
         parseInt($scope.y) === posY;
     };
+
+    /*
+     * return the actual position 
+     */
+    this.getActualPosition = function(){
+      return {
+        x: parseInt($scope.x),
+        y: parseInt($scope.y)
+      };
+
+    }
 
 
     var H_CENTER = 100; 
