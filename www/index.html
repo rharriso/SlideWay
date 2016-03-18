@@ -31,15 +31,11 @@
     <style id="app-style"></style>
 
     <master>
-    <div id="header" class="bar bar-header bar-dark">
-      <button class="icon ion-eye button button-dark"
-              ng-click="showSolution()"></button>
+    <div id="header" class="bar bar-header bar-dark ctrlbar">
       <button class="icon ion-image button button-dark"
-              ng-click="changeImage()"></button>
+              ng-click="resetClick()"></button>
 
       <h1 class="title">Planar</h1>
-      <button class="icon ion-shuffle button button-dark"
-              ng-click="gridCtrl.shuffle()"></button>
     </div>
     <div id="game-grid" game-grid>
       <div ng-repeat="p in positions"
@@ -51,6 +47,14 @@
                        x="{{p.x}}" y="{{p.y}}">
 
       </div>
+    </div>
+
+    <div class="bar bar-footer bar-dark ctrlbar">
+      <button class="icon ion-eye button button-dark"
+              ng-click="showSolution()"></button>
+      <h1 class="title"></h1>
+      <button class="icon ion-shuffle button button-dark"
+              ng-click="gridCtrl.shuffle()"></button>
     </div>
     </master>
 
@@ -66,6 +70,5 @@
         <div id="preview-image" style="background-image: url('img/puzzle/{{image}}')"/>
       </ion-modal-view>
     </script>
-
   </body>
 </html>

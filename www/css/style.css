@@ -4,12 +4,15 @@ body{
   width: 100%;
 }
 
-.bar-header{
+.bar-header, .bar-footer{
   transition:  transform 0.5s;
   transform: translateY(0%);
 }
 .bar-header.hidden {
   transform: translateY(-100%);
+}
+.bar-footer.hidden {
+  transform: translateY(100%);
 }
 
 .button.button-dark{

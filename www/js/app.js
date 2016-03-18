@@ -66,7 +66,6 @@
   var HEIGHT = 5;
   var WIDTH = 3;
   var HIDE_MENU_TIMEOUT = 2000;
-  var header = angular.element(document.getElementById("header"));
 
   /*
    * master directive
@@ -83,8 +82,7 @@
   /*
    * MasterController
    */
-  function MasterController($scope, $element, $ionicGesture, $ionicModal){
-    var header = angular.element(document.getElementById("header"));
+  function MasterController($scope, $element, $ionicGesture, $ionicModal, $ionicPopup){
 
     $ionicModal.fromTemplateUrl('templates/modal.html', {
       scope: $scope
@@ -99,19 +97,35 @@
       $scope.modal.show();
     };
 
+    var ctrlBars = angular.element(document.getElementsByClassName("ctrlbar"));
     /*
      * Hide the menu oafter a timeout
      */
     var hideMenu = _.debounce(function(){
-      header.addClass("hidden");
+      ctrlBars.addClass("hidden");
     }, HIDE_MENU_TIMEOUT);
     hideMenu();
+
+    /*
+     * click to start a new game
+     */
+    $scope.resetClick = function(){
+      var confirmPopup = $ionicPopup.confirm({
+        title: 'Start A new Game',
+        template: 'Are you sure you want to start a new game?'
+      });
+      confirmPopup.then(function(res) {
+        if(res) {
+          $scope.$broadcast('reset');
+        }
+      });
+    };
 
     /*
      * show menu on tap
      */
     $ionicGesture.on("tap", function(){
-      header.removeClass("hidden");
+      ctrlBars.removeClass("hidden");
       hideMenu(); // hide on delay
     }, $element);
   }
@@ -152,15 +166,20 @@
       "olympus.jpg",
       "pillars.jpg",
       "snow-lake.jpg",
+      "splash.jpg",
       "snow-street.jpg",
       "steak.jpg",
     ];
 
-    $scope.changeImage = function(){
+    /*
+     * start the game over
+     */
+    function reset (){
       selectImage();
       fixPositions();
       _this.shuffled = false;
     }
+    $scope.$on('reset', reset);
 
     /*
      * select image for square
@@ -171,8 +190,8 @@
 
       var styleTag = document.getElementById("app-style");
       styleTag.innerHTML = ".grid-square {" +
-                  "  background-image: url("+url+")" +
-          "}";
+        "  background-image: url("+url+")" +
+        "}";
     }
     selectImage();
 
@@ -221,6 +240,15 @@
       _this.shuffled = true;
       _this.sliding = true;
     };
+   
+    /*
+     * shuffle board if not done so yet
+     */ 
+    $ionicGesture.on("tap", function(){
+      if(!_this.shuffled){
+        _this.shuffle(); 
+      }
+    }, $element);
 
     /*
      * move spare grid into position for transition
@@ -549,40 +577,40 @@
 
 
     var H_CENTER = Math.floor(WIDTH / 2)
-    var V_CENTER = Math.floor(HEIGHT/ 2)
-    
-    /*
-     * Initialize the background image and position
-     */ 
-    function initBackgroundImage(){
-      var blockHeight = window.innerHeight / HEIGHT;
-      var blockWidth = window.innerWidth / WIDTH;
-      console.log(blockHeight, blockWidth);
-      var backX = ($scope.x - H_CENTER) * blockWidth;
-      var backXStr = "50%";
-      var backY = ($scope.y - V_CENTER) * blockHeight;
-      var backYStr = "50%";
-      console.log($scope.y, $scope.x);
+      var V_CENTER = Math.floor(HEIGHT/ 2)
 
-      if($scope.x === '2' && $scope.y === '0'){
-        console.log(backY, backX);
-      }
+      /*
+       * Initialize the background image and position
+       */ 
+      function initBackgroundImage(){
+        var blockHeight = window.innerHeight / HEIGHT;
+        var blockWidth = window.innerWidth / WIDTH;
+        console.log(blockHeight, blockWidth);
+        var backX = ($scope.x - H_CENTER) * blockWidth;
+        var backXStr = "50%";
+        var backY = ($scope.y - V_CENTER) * blockHeight;
+        var backYStr = "50%";
+        console.log($scope.y, $scope.x);
 
-      if(backX < 0) {
-        backXStr = "calc(50% + "+Math.abs(backX)+"px)";
-      } else if (backX > 0){
-        backXStr = "calc(50% - "+backX+"px)";
-      }
-      if(backY < 0) {
-        backYStr = "calc(50% + "+Math.abs(backY)+"px)";
-      } else if (backY > 0){
-        backYStr = "calc(50% - "+backY+"px)";
-      }
+        if($scope.x === '2' && $scope.y === '0'){
+          console.log(backY, backX);
+        }
 
-      $element.css({
-        "background-position": backXStr+" "+backYStr
-      });
-    }
+        if(backX < 0) {
+          backXStr = "calc(50% + "+Math.abs(backX)+"px)";
+        } else if (backX > 0){
+          backXStr = "calc(50% - "+backX+"px)";
+        }
+        if(backY < 0) {
+          backYStr = "calc(50% + "+Math.abs(backY)+"px)";
+        } else if (backY > 0){
+          backYStr = "calc(50% - "+backY+"px)";
+        }
+
+        $element.css({
+          "background-position": backXStr+" "+backYStr
+        });
+      }
 
     /*
      * Initialize
