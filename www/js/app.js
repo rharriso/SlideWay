@@ -121,6 +121,15 @@
       });
     };
 
+    $scope.$on("victory", function(){
+      $ionicPopup.alert({
+        template: "You Won!",
+        okText: "Play Again?"
+      }).then(function(){
+        $scope.$broadcast('reset'); 
+      });
+    });
+
     /*
      * show menu on tap
      */
@@ -160,15 +169,15 @@
       "droplet-window.jpg",
       "park-view.jpg",
       "saturn.jpg",
-      "snow-park.jpg",
+      "gaseous-cavity.jpg",
       "starry-night.jpg",
-      "cat-face.jpg",
+      "red-spot.jpg",
       "olympus.jpg",
       "pillars.jpg",
       "snow-lake.jpg",
       "splash.jpg",
       "snow-street.jpg",
-      "steak.jpg",
+      "helix.jpg",
     ];
 
     /*
@@ -438,7 +447,7 @@
      */
     function checkVictory(){
       if(isSolved()){
-        alert("fuck yeah");
+        $scope.$emit("victory");
       } 
     }
 
