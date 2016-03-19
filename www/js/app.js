@@ -397,7 +397,6 @@
     $scope.$on('swipedown', function(e, sqrCtrl){
       if(_this.sliding || !_this.shuffled) return false;
       var p = sqrCtrl.getPosition();
-      console.log("move column", p.x, "down"); 
 
       prepSpare({x: p.x, y: HEIGHT-1}, {x: p.x, y: -1});
       _this.sliding = true;
@@ -410,7 +409,6 @@
     $scope.$on('swipeleft', function(e, sqrCtrl){
       if(_this.sliding || !_this.shuffled) return false;
       var p = sqrCtrl.getPosition();
-      console.log("move row ", p.y, "left"); 
 
       prepSpare({x: 0, y: p.y}, {x: WIDTH + 1, y: p.y});
       _this.sliding = true;
@@ -424,7 +422,6 @@
       if(_this.sliding || !_this.shuffled) return false;
 
       var p = sqrCtrl.getPosition();
-      console.log("move row ", p.y, "right"); 
 
       prepSpare({x: WIDTH - 1, y: p.y}, {x: -1, y: p.y});
       _this.sliding = true;
@@ -594,16 +591,10 @@
       function initBackgroundImage(){
         var blockHeight = window.innerHeight / HEIGHT;
         var blockWidth = window.innerWidth / WIDTH;
-        console.log(blockHeight, blockWidth);
         var backX = ($scope.x - H_CENTER) * blockWidth;
         var backXStr = "50%";
         var backY = ($scope.y - V_CENTER) * blockHeight;
         var backYStr = "50%";
-        console.log($scope.y, $scope.x);
-
-        if($scope.x === '2' && $scope.y === '0'){
-          console.log(backY, backX);
-        }
 
         if(backX < 0) {
           backXStr = "calc(50% + "+Math.abs(backX)+"px)";
