@@ -7,3 +7,5 @@ plugins/
 .editorconfig
 bower_components
 
+*.apk
+*.keystore
