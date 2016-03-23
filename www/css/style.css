@@ -50,8 +50,14 @@ body{
   background-origin: center;
   transition-duration: 0.25s;
   background-size: auto 520%;
+  z-index: 2;
 }
 
 .grid-square.spare{
   display: none;
+  z-index: 1;
+}
+
+.sliding .grid-square.spare{
+  display: block;
 }
