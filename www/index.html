@@ -34,8 +34,9 @@
     <div id="header" class="bar bar-header bar-dark ctrlbar">
       <button class="icon ion-image button button-dark"
               ng-click="resetClick()"></button>
-
       <h1 class="title">Planar</h1>
+      <button class="icon ion-gear-b button button-dark"
+              ng-click="showSettings()"></button>
     </div>
     <div id="game-grid" game-grid>
       <div ng-repeat="p in positions"
@@ -61,13 +62,44 @@
     <ion-footer-bar class="bar-stable ad-bar">
     </ion-footer-bar>
 
-    <script id="templates/modal.html" type="text/ng-template">
+    <script id="templates/solution.html" type="text/ng-template">
       <ion-modal-view>
         <ion-header-bar class="bar bar-header bar-dark">
         <h1 class="title">solution</h1>
-        <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
+        <button class="button button-clear button-primary" ng-click="solutionModal.hide()">Cancel</button>
         </ion-header-bar>
         <div id="preview-image" style="background-image: url('img/puzzle/{{image}}')"/>
+      </ion-modal-view>
+    </script>
+
+    <script id="templates/settings.html" type="text/ng-template">
+      <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-dark">
+        <h1 class="title">Settings</h1>
+        <button class="button button-clear button-primary" ng-click="settingsModal.hide()">Cancel</button>
+        </ion-header-bar>
+        <ion-content>
+          <div class="list">
+            <label class="item item-input item-select">
+              <div class="input-label">
+                Board Size
+              </div>
+              <select ng-model="settings.size">
+                <option>3x3</option>
+                <option>3x5</option>
+                <option>5x5</option>
+                <option>5x7</option>
+              </select>
+            </label>
+            </div>
+
+          <button
+            class="button button-balanced"
+            ng-click="saveSettings()">Save</button>
+          <button
+            class="button button-assertive"
+            ng-click="settingsModal.hide()">Cancel</button>
+        </ion-content>
       </ion-modal-view>
     </script>
   </body>

@@ -84,17 +84,36 @@
    */
   function MasterController($scope, $element, $ionicGesture, $ionicModal, $ionicPopup){
 
-    $ionicModal.fromTemplateUrl('templates/modal.html', {
+    /*
+     * Solution Modal
+     */
+    $ionicModal.fromTemplateUrl('templates/solution.html', {
       scope: $scope
     }).then(function(modal) {
-      $scope.modal = modal;
+      $scope.solutionModal = modal;
     });
 
     /*
      * Show correct arrangement
      */
     $scope.showSolution = function(){
-      $scope.modal.show();
+      $scope.solitionModal.show();
+    };
+    
+    /*
+     * Solution Modal
+     */
+    $ionicModal.fromTemplateUrl('templates/settings.html', {
+      scope: $scope
+    }).then(function(modal) {
+      $scope.settingsModal = modal;
+    });
+
+    /*
+     * Show settings 
+     */
+    $scope.showSettings = function(){
+      $scope.settingsModal.show();
     };
 
     var ctrlBars = angular.element(document.getElementsByClassName("ctrlbar"));
