@@ -45,11 +45,8 @@ body{
 
 .grid-square{
   position: absolute;
-  width: 33.333%;
-  height: 20%;
   background-origin: center;
   transition-duration: 0.25s;
-  background-size: auto 520%;
   z-index: 2;
 }
 

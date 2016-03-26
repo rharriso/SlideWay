@@ -63,8 +63,8 @@
   "use strict";
   var app = angular.module('slideway', []);  
 
-  var HEIGHT = 5;
-  var WIDTH = 3;
+  var HEIGHT = 7;
+  var WIDTH = 5;
   var HIDE_MENU_TIMEOUT = 7000;
 
   /*
@@ -106,6 +106,17 @@
     }, HIDE_MENU_TIMEOUT);
     hideMenu();
 
+    function toggleMenu(){
+      hideMenu.cancel();
+      if(ctrlBars.hasClass("hidden")){
+        ctrlBars.removeClass("hidden");
+      }
+      else {
+        ctrlBars.addClass("hidden");
+        hideMenu();
+      }
+    }
+
     /*
      * click to start a new game
      */
@@ -134,8 +145,7 @@
      * show menu on tap
      */
     $ionicGesture.on("tap", function(){
-      ctrlBars.removeClass("hidden");
-      hideMenu(); // hide on delay
+      toggleMenu(); // hide on delay
     }, $element);
   }
   app.controller("MasterController", MasterController);
@@ -199,7 +209,10 @@
 
       var styleTag = document.getElementById("app-style");
       styleTag.innerHTML = ".grid-square {" +
-        "  background-image: url("+url+")" +
+        "  background-image: url("+url+");" +
+        "  height: " + (100/HEIGHT) +"%;" +
+        "  width: " + (100/WIDTH) +"%;" +
+        "  background-size: auto " + (110*HEIGHT) +"%;" +
         "}";
     }
     selectImage();
