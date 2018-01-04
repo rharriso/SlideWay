@@ -9,3 +9,4 @@ bower_components
 
 *.apk
 *.keystore
+/www/lib
